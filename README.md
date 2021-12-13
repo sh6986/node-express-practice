@@ -24,6 +24,12 @@ package-lock.json 파일과 mode_modules 폴더가 생성된다.
 npm start
 ```
 
+### MySQL 연동하기
+mysql 모듈설치
+```java
+npm install --save mysql
+npm install
+```
 
 ---
 
