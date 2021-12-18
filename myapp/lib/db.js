@@ -3,7 +3,7 @@ const db = mysql.createConnection({
     host: 'localhost',
     user: 'root',
     password: 'asd97979',
-    database: 'opentutorials'
+    database: 'planner'
 });
 db.connect();
 
