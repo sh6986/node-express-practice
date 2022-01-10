@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../lib/db');
+const {response} = require("express");
 
 // 로그인화면
 router.get('/login', (req, res) => {
@@ -30,14 +31,11 @@ router.post('/login_process', (req, res) => {
         }
 
         if (user.length) {    // 로그인 성공시
-            res.writeHead(302, {
-                'Set-Cookie': [
-                    `id=${user[0].user_id}; Path=/`,
-                ],
-                location: '/'
+            req.session.is_logined = true;
+            req.session.user_id = user[0].user_id;
+            req.session.save(() => {    // 세션스토어에 저장 후 코드실행. 그렇지않으면 응답(리다이렉트) 후 스토어에 저장되므로 값 반영x
+                res.redirect('/');
             });
-            res.end();
-            
         } else {    // 로그인 실패시
             res.send('아이디와 비밀번호를 확인하세요.');
         }
@@ -46,13 +44,9 @@ router.post('/login_process', (req, res) => {
 
 // 로그아웃
 router.get('/logout_process', (req, res) => {
-    res.writeHead(302, {
-        'Set-Cookie': [
-            `id=; Max-Age=0; Path=/`
-        ],
-        location: '/'
+    req.session.destroy(function(err) {
+        res.redirect('/');
     });
-    res.end();
 });
 
 module.exports = router;
