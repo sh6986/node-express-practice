@@ -1,8 +1,21 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const cookie = require('cookie');
+const router = express.Router();
 
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
+  let user = {};
+  let template = ``;
+
+  if (req.headers.cookie) {
+    user = cookie.parse(req.headers.cookie);
+  }
+  
+  template = user.id ? `<a href="/auth/logout_process">로그아웃</a>` : `<a href="/auth/login">로그인</a>`;
+
+  res.send(`
+    <p>index 페이지 | ${user.id ? user.id : `로그인해주세요`}</p>
+    ${template}
+  `);
 });
 
 module.exports = router;

@@ -4,6 +4,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const indexRouter = require('./routes/index');
+const authRouter = require('./routes/auth');
 const todoRouter = require('./routes/todo');
 
 const app = express();
@@ -29,6 +30,7 @@ app.use(express.urlencoded({ extended: false }));
  * 라우터
  */
 app.use('/', indexRouter);
+app.use('/auth', authRouter);
 app.use('/todo', todoRouter);
 
 
