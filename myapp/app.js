@@ -5,6 +5,7 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const session = require('express-session');
 const FileStore = require('session-file-store')(session);
+const {sequelize} = require('./models');
 const app = express();
 
 /**
@@ -12,7 +13,13 @@ const app = express();
  */
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
-
+sequelize.sync({force: false})
+    .then(() => {
+      console.log('데이터베이스 연결 성공');
+    })
+    .catch((err) => {
+      console.error(err);
+    });
 
 /**
  * 공통 미들웨어
