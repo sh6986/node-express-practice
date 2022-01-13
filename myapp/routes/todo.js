@@ -1,13 +1,28 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../lib/db');
+const {Todo} = require('../models');
 
 // 리스트 조회
-router.get('/', (req, res) => {
-    db.query(`SELECT * FROM todo`, (err, result) => {
-        console.log(result);
-        res.send(result);
-    });
+// router.get('/', (req, res) => {
+//     db.query(`SELECT * FROM todo`, (err, result) => {
+//         console.log(result);
+//         res.send(result);
+//     });
+// });
+
+router.get('/', async (req, res) => {
+    try {
+        const result = await Todo.findAll({
+            where: {
+                user_id: '2'
+            }
+        });
+        res.json(result);
+    } catch (err) {
+        console.error(err);
+        next(err);
+    }
 });
 
 // todo항목 추가 (생성)
