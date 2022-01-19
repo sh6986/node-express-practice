@@ -4,18 +4,11 @@ const db = require('../lib/db');
 const {Todo} = require('../models');
 
 // 리스트 조회
-// router.get('/', (req, res) => {
-//     db.query(`SELECT * FROM todo`, (err, result) => {
-//         console.log(result);
-//         res.send(result);
-//     });
-// });
-
-router.get('/', async (req, res) => {
+router.get('/:userId', async (req, res, next) => {
     try {
         const result = await Todo.findAll({
             where: {
-                user_id: '2'
+                user_id: req.params.userId
             }
         });
         res.json(result);
@@ -26,35 +19,50 @@ router.get('/', async (req, res) => {
 });
 
 // todo항목 추가 (생성)
-router.post('/create', (req, res) => {
-    const todo = req.body;
-
-    db.query(`INSERT INTO todo(CONTENT, CHECK_YN, DEL_YN, REG_DATE, UDT_DATE) VALUES (?, 'N', 'N', NOW(), NOW())`, [todo.content], (err, result) => {
-        console.log(result);
-        res.end();
-    });
+router.post('/', async (req, res, next) => {
+    try {
+        const todo = await Todo.create({
+            content: req.body.content,
+            user_id: req.body.userId
+        });
+        console.log(todo);
+        res.status(201).json(todo);
+    } catch (err) {
+        console.error(err);
+        next(err);
+    }
 });
-
 
 // todo내용 수정
-router.post('/modify', (req, res) => {
-    const todo = req.body;
-
-    db.query(`UPDATE todo SET CONTENT = ?, UDT_DATE = NOW() WHERE id = ?`, [todo.content, todo.id], (err, result) => {
-        console.log(result);
-        res.end();
-    });
+router.put('/', async (req, res, next) => {
+    const today = new Date();
+    try {
+        const todo = await Todo.update({
+            content: req.body.content,
+            udt_date: today
+        }, {
+            where: {id: req.body.id}
+        });
+        console.log(todo);
+        res.status(201).json(todo);
+    } catch (err) {
+        console.error(err);
+        next(err);
+    }
 });
 
-
 // todo항목 삭제
-router.post('/remove', (req, res) => {
-    const todo = req.body;
-
-    db.query(`DELETE FROM todo WHERE id = ?`, [todo.id], (err, result) => {
-        console.log(result);
-        res.end();
-    });
+router.delete('/', async(req, res, next) => {
+    try {
+        const todo = await Todo.destroy({
+            where: {id: req.body.id}
+        });
+        console.log(todo);
+        res.status(201).json(todo);
+    } catch (err) {
+        console.error(err);
+        next(err);
+    }
 });
 
 
