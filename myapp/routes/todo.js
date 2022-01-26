@@ -1,14 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../lib/db');
 const {Todo} = require('../models');
 
 // 리스트 조회
-router.get('/:userId', async (req, res, next) => {
+router.get('/:userEmail', async (req, res, next) => {
     try {
         const result = await Todo.findAll({
             where: {
-                user_id: req.params.userId
+                user_email: req.params.user_email
             }
         });
         res.json(result);
@@ -23,7 +22,7 @@ router.post('/', async (req, res, next) => {
     try {
         const todo = await Todo.create({
             content: req.body.content,
-            user_id: req.body.userId
+            user_email: req.body.user_email
         });
         console.log(todo);
         res.status(201).json(todo);

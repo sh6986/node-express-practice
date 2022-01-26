@@ -39,6 +39,6 @@ module.exports = class Todo extends Sequelize.Model {
     }
 
     static associate(db) {
-        db.Todo.belongsTo(db.User, {foreignKey: 'user_id', targetKey: 'id'});
+        db.Todo.belongsTo(db.User, {foreignKey: 'user_email', targetKey: 'id'});
     }
 };

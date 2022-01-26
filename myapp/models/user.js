@@ -3,7 +3,7 @@ const Sequelize = require('sequelize');
 module.exports = class User extends Sequelize.Model {
     static init(sequelize) {
         return super.init({
-            user_id: {
+            user_email: {
                 type: Sequelize.STRING(50),
                 allowNull: false    // not null
             },
@@ -13,11 +13,20 @@ module.exports = class User extends Sequelize.Model {
             },
             user_pwd: {
                 type: Sequelize.STRING(50),
-                allowNull: false
+                allowNull: true
+            },
+            sns_id: {
+                type: Sequelize.STRING(50),
+                allowNull: true
+            },
+            provider: {
+                type: Sequelize.STRING(50),
+                allowNull: true
             },
             del_yn: {
                 type: Sequelize.STRING(1),
-                allowNull: false
+                allowNull: false,
+                defaultValue: 'N',
             },
             reg_date: {
                 type: Sequelize.DATE,
@@ -41,6 +50,6 @@ module.exports = class User extends Sequelize.Model {
     }
 
     static associate(db) {
-        db.User.hasMany(db.Todo, {foreignKey: 'user_id', sourceKey: 'id'});
+        db.User.hasMany(db.Todo, {foreignKey: 'user_email', sourceKey: 'id'});
     }
 };

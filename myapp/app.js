@@ -4,13 +4,20 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const session = require('express-session');
+const passport = require("passport");
 const FileStore = require('session-file-store')(session);
+const dotenv = require('dotenv');
 const {sequelize} = require('./models');
+const indexRouter = require('./routes/index');
+const authRouter = require('./routes/auth');
+const todoRouter = require('./routes/todo');
+const passportConfig = require('./passport/index');
 const app = express();
 
 /**
  * app 관련 설정
  */
+dotenv.config();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 sequelize.sync({force: false})
@@ -20,6 +27,8 @@ sequelize.sync({force: false})
     .catch((err) => {
       console.error(err);
     });
+
+passportConfig();
 
 /**
  * 공통 미들웨어
@@ -38,14 +47,14 @@ app.use(session({ // req 객체에 세션 객체를 만든다.
                 // 도중에 세션스토어의 데이터 값이 바꿔면 요청이 끝난 후 세션미들웨어가 세션스토어에 값을 반영 후 작업을 끝낸다.
                 // 세션스토어없이 세션을 사용하면 세션의 데이터값은 메모리에 저장되어 서버가 꺼지면 휘발되므로 이를 방지하기 위해 세션스토어를 사용한다.
 }));
-const passport = require('./lib/passport')(app);
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 /**
  * 라우터
  */
-const indexRouter = require('./routes/index');
-const authRouter = require('./routes/auth')(passport);
-const todoRouter = require('./routes/todo');
+
 
 app.use('/', indexRouter);
 app.use('/auth', authRouter);

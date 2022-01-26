@@ -12,7 +12,7 @@ router.get('/', function(req, res, next) {
   }
 
   res.send(`
-    <p>index 페이지 | ${req.user ? req.user[0].user_nm : `로그인해주세요`}</p>
+    <p>index 페이지 | ${req.user ? req.user.user_nm : `로그인해주세요`}</p>
     ${template}
   `);
 });
