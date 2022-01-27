@@ -8,7 +8,9 @@ router.get('/', function(req, res, next) {
   if (req.user) {
     template = `<a href="/auth/logout_process">로그아웃</a>`;
   } else {
-    template = `<a href="/auth/login">로그인</a>`;
+    template = `<a href="/auth/login">로그인</a>
+                <a href="/auth/join">회원가입</a>
+    `;
   }
 
   res.send(`

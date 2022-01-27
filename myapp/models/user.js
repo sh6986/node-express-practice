@@ -12,7 +12,7 @@ module.exports = class User extends Sequelize.Model {
                 allowNull: false
             },
             user_pwd: {
-                type: Sequelize.STRING(50),
+                type: Sequelize.STRING(100),
                 allowNull: true
             },
             sns_id: {
