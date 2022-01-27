@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const {Todo} = require('../models');
+const {isNotLoggedIn, isLoggedIn} = require('./middlewares');
 
 // 리스트 조회
-router.get('/:userEmail', async (req, res, next) => {
+router.get('/:userEmail', isLoggedIn, async (req, res, next) => {
     try {
         const result = await Todo.findAll({
             where: {
@@ -18,7 +19,7 @@ router.get('/:userEmail', async (req, res, next) => {
 });
 
 // todo항목 추가 (생성)
-router.post('/', async (req, res, next) => {
+router.post('/', isLoggedIn, async (req, res, next) => {
     try {
         const todo = await Todo.create({
             content: req.body.content,
@@ -33,7 +34,7 @@ router.post('/', async (req, res, next) => {
 });
 
 // todo내용 수정
-router.put('/', async (req, res, next) => {
+router.put('/', isLoggedIn, async (req, res, next) => {
     const today = new Date();
     try {
         const todo = await Todo.update({
@@ -51,7 +52,7 @@ router.put('/', async (req, res, next) => {
 });
 
 // todo항목 삭제
-router.delete('/', async(req, res, next) => {
+router.delete('/', isLoggedIn, async(req, res, next) => {
     try {
         const todo = await Todo.destroy({
             where: {id: req.body.id}

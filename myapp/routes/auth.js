@@ -2,10 +2,11 @@ const express = require('express');
 const passport = require('passport');
 const bcrypt = require('bcrypt');
 const {User} = require('../models');
+const {isLoggedIn, isNotLoggedIn} = require('./middlewares');
 const router = express.Router();
 
 // 로그인화면
-router.get('/login', (req, res) => {
+router.get('/login', isNotLoggedIn , (req, res) => {
     res.send(`
         <form action="/auth/login_process" method="post">
             <input type="text" name="id">
@@ -17,7 +18,7 @@ router.get('/login', (req, res) => {
 });
 
 // 로그인
-router.post('/login_process',
+router.post('/login_process', isNotLoggedIn,
     passport.authenticate('local', {
         failureRedirect: '/auth/login',
     }), (req, res) => {
@@ -27,7 +28,7 @@ router.post('/login_process',
     });
 
 // 회원가입 화면
-router.get('/join', (req, res) => {
+router.get('/join', isNotLoggedIn, (req, res) => {
     res.send(`
         <form action="/auth/join_process" method="post">
             이메일:<input type="text" name="user_email">
@@ -39,7 +40,7 @@ router.get('/join', (req, res) => {
 });
 
 // 회원가입
-router.post('/join_process', async (req, res, next) => {
+router.post('/join_process', isNotLoggedIn, async (req, res, next) => {
     console.log(req.body);
     const {user_email, user_nm, user_pwd} = req.body;
 
@@ -72,7 +73,7 @@ router.post('/join_process', async (req, res, next) => {
 });
 
 // 로그아웃
-router.get('/logout_process', (req, res) => {
+router.get('/logout_process', isLoggedIn, (req, res) => {
     req.logout();
     req.session.save(() => {
         res.redirect('/');
