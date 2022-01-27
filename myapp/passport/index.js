@@ -9,10 +9,8 @@ module.exports = () => {
     });
 
     passport.deserializeUser((id, done) => {
-        console.log('!!!suc');
-        console.log(id);
         User.findOne({
-            attributes: ['user_email', 'user_nm'],
+            attributes: ['id', 'user_email', 'user_nm'],
             where: {
                 user_email: id,
             }

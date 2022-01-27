@@ -7,6 +7,10 @@ module.exports = class Todo extends Sequelize.Model {
                 type: Sequelize.TEXT,
                 allowNull: true
             },
+            img: {
+                type: Sequelize.STRING(100),
+                allowNull: true
+            },
             check_yn: {
                 type: Sequelize.STRING(1),
                 allowNull: false,
@@ -39,6 +43,6 @@ module.exports = class Todo extends Sequelize.Model {
     }
 
     static associate(db) {
-        db.Todo.belongsTo(db.User, {foreignKey: 'user_email', targetKey: 'id'});
+        db.Todo.belongsTo(db.User, {foreignKey: 'user_id', targetKey: 'id'});
     }
 };

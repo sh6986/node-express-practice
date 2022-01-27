@@ -50,6 +50,6 @@ module.exports = class User extends Sequelize.Model {
     }
 
     static associate(db) {
-        db.User.hasMany(db.Todo, {foreignKey: 'user_email', sourceKey: 'id'});
+        db.User.hasMany(db.Todo, {foreignKey: 'user_id', sourceKey: 'id'});
     }
 };

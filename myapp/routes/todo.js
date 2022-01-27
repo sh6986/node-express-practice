@@ -2,13 +2,16 @@ const express = require('express');
 const router = express.Router();
 const {Todo} = require('../models');
 const {isNotLoggedIn, isLoggedIn} = require('./middlewares');
+const fs = require('fs');
+const multer = require('multer');
+const path = require('path');
 
 // 리스트 조회
-router.get('/:userEmail', isLoggedIn, async (req, res, next) => {
+router.get('/list/:user_id', isLoggedIn, async (req, res, next) => {
     try {
         const result = await Todo.findAll({
             where: {
-                user_email: req.params.user_email
+                user_id: req.params.user_id
             }
         });
         res.json(result);
@@ -18,15 +21,47 @@ router.get('/:userEmail', isLoggedIn, async (req, res, next) => {
     }
 });
 
+try {
+    fs.readdirSync('uploads');
+} catch (error) {
+    console.error('uploads 폴더가 없어 uploads 폴더를 생성');
+    fs.mkdirSync('uploads');
+}
+
+// todo추가 화면
+router.get('/create', (req, res) => {
+    res.send(`
+        <form action="/todo/create_process" method="post" enctype="multipart/form-data">
+            내용:<input type="text" name="id">
+            <input type="file" name="img" accept="image/*">
+<!--            <img src="">-->
+            <button type="submit">추가</button>
+        </form>
+    `);
+});
+
+const upload = multer({
+    storage: multer.diskStorage({
+        destination(req, res, cb) {
+            cb(null, 'uploads/');
+        },
+        filename(req, file, cb) {
+            const ext = path.extname(file.originalname);
+            cb(null, path.basename(file.originalname, ext) + Date.now() + ext);
+        },
+    }),
+    limits: {fileSize: 5 * 1024 * 1024},
+});
+
 // todo항목 추가 (생성)
-router.post('/', isLoggedIn, async (req, res, next) => {
+router.post('/create_process', isLoggedIn, upload.single('img'), async (req, res, next) => {
     try {
         const todo = await Todo.create({
             content: req.body.content,
-            user_email: req.body.user_email
+            img: req.file.filename,
+            user_id: req.user.id
         });
-        console.log(todo);
-        res.status(201).json(todo);
+        res.redirect('/');
     } catch (err) {
         console.error(err);
         next(err);
